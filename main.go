@@ -1,10 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"log"
+	"net/http"
+	"tib/structs"
 	"tib/updater"
-	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 const (
@@ -19,8 +21,25 @@ func main() {
 		log.Fatal(err)
 	}
 
-	for {
-		time.Sleep(30 * time.Second)
-		fmt.Printf("Trip count: %d\n", manager.GetTripCount())
+	router := gin.New()
+	router.Use(gin.Logger(), gin.Recovery())
+
+	router.GET("/", Handler)
+	router.GET("/trips", manager.TripCountHandler)
+
+	address := "0.0.0.0:8080"
+	err = router.Run(address)
+	if err != nil {
+		log.Fatal(err)
 	}
+}
+
+func Handler(c *gin.Context) {
+	response := structs.MainResponse{
+		Msg:          "It works!",
+		Repository:   "https://github.com/TonimatasDEV/tib-api",
+		IssueTracker: "https://github.com/TonimatasDEV/tib-api/issues",
+	}
+
+	c.JSON(http.StatusOK, response)
 }

@@ -1,9 +1,12 @@
 package updater
 
 import (
+	"net/http"
 	"sync"
 	"tib/structs"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type TripManager struct {
@@ -65,4 +68,12 @@ func (tm *TripManager) GetTripCount() int {
 	tm.mu.RLock()
 	defer tm.mu.RUnlock()
 	return len(tm.trips)
+}
+
+func (tm *TripManager) TripCountHandler(c *gin.Context) {
+	tripsResponse := structs.TripsResponse{
+		Count: tm.GetTripCount(),
+	}
+
+	c.JSON(http.StatusOK, tripsResponse)
 }
