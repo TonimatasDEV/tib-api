@@ -1,8 +1,8 @@
 package updater
 
 import (
-	"estamos-zumbados/structs"
 	"sync"
+	"tib/structs"
 	"time"
 )
 

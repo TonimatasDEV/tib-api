@@ -2,8 +2,8 @@ package structs
 
 import (
 	"encoding/json"
-	"estamos-zumbados/utils"
 	"strings"
+	"tib/utils"
 )
 
 var stopsCache []Stop
