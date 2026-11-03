@@ -1,9 +1,9 @@
 package main
 
 import (
-	"estamos-zumbados/updater"
 	"fmt"
 	"log"
+	"tib/updater"
 	"time"
 )
 
