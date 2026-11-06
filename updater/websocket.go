@@ -2,27 +2,49 @@ package updater
 
 import (
 	"context"
-	"time"
+	"log"
 
 	"github.com/coder/websocket"
 	"github.com/coder/websocket/wsjson"
 )
 
+type GetType struct {
+	Type string `json:"type"`
+}
+
 // TODO
 func openWebsocket() {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-	defer cancel()
+	ctx := context.Background()
 
-	c, _, err := websocket.Dial(ctx, "ws://localhost:8080", nil)
+	c, _, err := websocket.Dial(ctx, "wss://sae.tib.org/saews/public-events/11417623", nil)
 	if err != nil {
 		// ...
 	}
 	defer c.CloseNow()
 
-	err = wsjson.Read(ctx, c, "hi")
-	if err != nil {
+	for {
+		var jsonType GetType
 
+		err = wsjson.Read(ctx, c, &jsonType)
+		if err != nil {
+			continue
+		}
+
+		switch jsonType.Type {
+		case "position":
+			println("Getting position")
+		case "esta-info":
+			println("Getting bus info")
+		case "stop":
+			println("Arriving to stop")
+		case "close":
+			println("Closing this websocket")
+			err = c.Close(websocket.StatusNormalClosure, "")
+			if err != nil {
+				break
+			}
+		default:
+			log.Println("Unknown type:", jsonType.Type)
+		}
 	}
-
-	c.Close(websocket.StatusNormalClosure, "")
 }
